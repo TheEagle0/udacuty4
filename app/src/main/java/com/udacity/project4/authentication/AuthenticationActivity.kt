@@ -32,11 +32,10 @@ class AuthenticationActivity : AppCompatActivity() {
         )
 
         binding.lifecycleOwner = this
-
+        if (isLoggedIn()) startReminderActivity()
         binding.signInButton.setOnClickListener {
             launchSignInFlow()
         }
-
     }
 
     private fun launchSignInFlow() {
@@ -59,7 +58,10 @@ class AuthenticationActivity : AppCompatActivity() {
             val response = IdpResponse.fromResultIntent(data)
             if (resultCode == Activity.RESULT_OK) {
                 // User successfully signed in
-                Log.i(TAG, "Successfully signed in user ${FirebaseAuth.getInstance().currentUser?.displayName}!")
+                Log.i(
+                    TAG,
+                    "Successfully signed in user ${FirebaseAuth.getInstance().currentUser?.displayName}!"
+                )
                 Toast.makeText(this, "Successfully signed in", Toast.LENGTH_SHORT).show()
                 startReminderActivity()
 
@@ -74,6 +76,12 @@ class AuthenticationActivity : AppCompatActivity() {
         val intent = Intent(this, RemindersActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    fun isLoggedIn(): Boolean {
+        val firebaseAuth = FirebaseAuth.getInstance()
+        return firebaseAuth.currentUser != null
+
     }
 
     companion object {
